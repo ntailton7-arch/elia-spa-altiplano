@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <style>
+    /* ==========================================================
+   Eliá SPA Altiplano
+   Paleta tirada do próprio espaço: verde celadon das cerâmicas,
+   âmbar da luz do teto, areia da pedra e verde-floresta do letreiro.
+   ========================================================== */
+
+:root {
+  --forest: #10231a;
+  --forest-rgb: 12, 28, 20;
+  --ivory: #f7f1e1;
+  --sand: #e3d3b1;
+  --celadon: #b8ccb2;
+  --moss: #5d7f58;
+  --amber: #f2a93b;
+  --amber-deep: #d98a1f;
+  --ink-on-amber: #201503;
+
+  --font-display: "Marcellus", "Times New Roman", Georgia, serif;
+  --font-body: "Albert Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --gutter: clamp(1.25rem, 5vw, 3rem);
+  --section-y: clamp(4rem, 10vw, 8rem);
+  --header-h: 4.25rem;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  background: var(--forest);
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--header-h) + 0.5rem);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: transparent;
+  color: var(--ivory);
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img { display: block; max-width: 100%; height: auto; }
+a { color: inherit; }
+ul { margin: 0; padding: 0; list-style: none; }
+h1, h2, h3, p, figure, address { margin: 0; }
+address { font-style: normal; }
+
+/* ---------- Vídeo de fundo (tela toda, fixo) ---------- */
+.bg {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 100vh;
+  height: 100lvh;
+  z-index: -1;
+  overflow: hidden;
+  background: var(--forest);
+}
+.bg video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 52%;
+}
+.bg-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top, rgba(var(--forest-rgb), .90) 0%, rgba(var(--forest-rgb), .35) 42%, rgba(var(--forest-rgb), .35) 100%);
+}
+
+/* ---------- Acessibilidade ---------- */
+.skip {
+  position: absolute;
+  left: 1rem; top: -4rem;
+  background: var(--ivory); color: var(--forest);
+  padding: .6rem 1rem; border-radius: 999px; z-index: 100;
+}
+.skip:focus { top: .75rem; }
+
+:focus-visible {
+  outline: 3px solid var(--celadon);
+  outline-offset: 3px;
+}
+
+/* ---------- Cabeçalho ---------- */
+.topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 50;
+  height: var(--header-h);
+  padding: 0 var(--gutter);
+  padding-top: env(safe-area-inset-top);
+  box-sizing: content-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  transition: background-color .3s ease, box-shadow .3s ease;
+}
+.topbar.is-solid {
+  background: rgba(var(--forest-rgb), .9);
+  box-shadow: 0 1px 0 rgba(227, 211, 177, .18);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.logo {
+  font-family: var(--font-display);
+  font-size: 1.85rem;
+  line-height: 1;
+  text-decoration: none;
+  letter-spacing: .01em;
+  display: inline-flex;
+  align-items: baseline;
+  gap: .3rem;
+}
+.logo span {
+  font-family: var(--font-body);
+  font-size: .8rem;
+  font-weight: 500;
+  letter-spacing: .14em;
+  color: var(--celadon);
+}
+
+.nav { display: none; gap: 2rem; margin-left: auto; margin-right: 1rem; }
+.nav a {
+  text-decoration: none;
+  font-weight: 500;
+  padding: .5rem 0;
+  border-bottom: 1.5px solid transparent;
+  transition: border-color .2s ease;
+}
+.nav a:hover { border-bottom-color: var(--amber); }
+
+@media (min-width: 860px) { .nav { display: flex; } }
+
+/* ---------- Botões ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .55rem;
+  min-height: 3rem;
+  padding: 0 1.5rem;
+  border-radius: 999px;
+  font: 600 1rem/1 var(--font-body);
+  text-decoration: none;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: transform .15s ease, background-color .2s ease, color .2s ease, border-color .2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn:active { transform: scale(.97); }
+.btn-sm { min-height: 2.5rem; padding: 0 1.2rem; font-size: .95rem; }
+
+.btn-amber { background: var(--amber); color: var(--ink-on-amber); }
+.btn-amber:hover { background: #f7bb5c; }
+
+.btn-line { border-color: rgba(247, 241, 225, .7); color: var(--ivory); background: rgba(var(--forest-rgb), .25); }
+.btn-line:hover { background: var(--ivory); color: var(--forest); border-color: var(--ivory); }
+
+.icon {
+  width: 1.2rem; height: 1.2rem;
+  fill: none; stroke: currentColor;
+  stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+  flex: none;
+}
+.icon-star { fill: var(--amber); stroke: var(--amber); width: 1.05rem; height: 1.05rem; }
+
+.actions { display: flex; flex-wrap: wrap; gap: .75rem; }
+
+/* ---------- Hero ---------- */
+.hero {
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  align-items: flex-end;
+  padding: calc(var(--header-h) + 2rem) var(--gutter) calc(3rem + env(safe-area-inset-bottom));
+}
+.hero-inner { width: 100%; max-width: 72rem; margin: 0 auto; }
+.hero-inner > * { max-width: 40rem; }
+
+.rating {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .4rem .9rem;
+  margin-bottom: 1.25rem;
+  border-radius: 999px;
+  font-size: .95rem;
+  font-weight: 500;
+  background: rgba(var(--forest-rgb), .55);
+  border: 1px solid rgba(227, 211, 177, .3);
+}
+
+h1, h2, h3 { font-family: var(--font-display); font-weight: 400; }
+
+h1 {
+  font-size: clamp(2.6rem, 8.5vw, 5.4rem);
+  line-height: 1.02;
+  letter-spacing: -.01em;
+  text-wrap: balance;
+  text-shadow: 0 2px 24px rgba(var(--forest-rgb), .55);
+}
+.lead {
+  margin: 1.25rem 0 2rem;
+  font-size: clamp(1.1rem, 2.4vw, 1.3rem);
+  line-height: 1.55;
+  color: var(--sand);
+  text-shadow: 0 1px 12px rgba(var(--forest-rgb), .6);
+}
+
+/* Único momento de movimento na entrada da página */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-inner > * {
+    opacity: 0;
+    transform: translateY(18px);
+    animation: rise .9s cubic-bezier(.2, .7, .2, 1) forwards;
+  }
+  .hero-inner > *:nth-child(1) { animation-delay: .15s; }
+  .hero-inner > *:nth-child(2) { animation-delay: .3s; }
+  .hero-inner > *:nth-child(3) { animation-delay: .45s; }
+  .hero-inner > *:nth-child(4) { animation-delay: .6s; }
+}
+@keyframes rise { to { opacity: 1; transform: none; } }
+
+/* ---------- Faixas de conteúdo ---------- */
+.band {
+  padding: var(--section-y) var(--gutter);
+  background: rgba(var(--forest-rgb), .72);
+}
+.band-soft { background: rgba(var(--forest-rgb), .62); }
+.band-deep { background: rgba(var(--forest-rgb), .8); }
+
+.wrap { max-width: 72rem; margin: 0 auto; }
+
+h2 {
+  font-size: clamp(2rem, 5.2vw, 3.3rem);
+  line-height: 1.1;
+  margin-bottom: 1.25rem;
+  text-wrap: balance;
+}
+h3 { font-size: 1.55rem; line-height: 1.2; }
+
+.section-lead { max-width: 36rem; color: var(--sand); margin-bottom: 2.5rem; }
+
+.copy p { max-width: 34rem; margin-bottom: 1.1rem; }
+.copy .btn { margin-top: .75rem; }
+
+/* Foto em arco: lembra a porta de entrada do spa */
+.arch {
+  border-radius: 999px 999px 18px 18px;
+  overflow: hidden;
+  background: var(--moss);
+}
+.arch img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; }
+
+.split { display: grid; gap: 2.5rem; align-items: center; }
+.split .arch { max-width: 26rem; width: 100%; margin: 0 auto; }
+
+@media (min-width: 900px) {
+  .split { grid-template-columns: 5fr 6fr; gap: 5rem; }
+  .split .arch { margin: 0; }
+}
+
+/* ---------- Galeria ---------- */
+.gallery {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding: 0 var(--gutter) 1rem;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--gutter);
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.gallery::-webkit-scrollbar { display: none; }
+.gallery li { flex: 0 0 72vw; max-width: 20rem; scroll-snap-align: start; }
+
+.shot {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  cursor: zoom-in;
+  background: var(--moss);
+  border-radius: 999px 999px 16px 16px;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+.shot img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; transition: transform .5s ease; }
+.shot:hover img { transform: scale(1.04); }
+
+.cap { margin-top: .75rem; font-size: .95rem; color: var(--sand); text-align: center; }
+
+@media (min-width: 640px) {
+  .gallery li { flex-basis: 44vw; }
+}
+
+@media (min-width: 900px) {
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem 2rem;
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 0;
+    overflow: visible;
+  }
+  .gallery li { max-width: none; }
+  .gallery li:nth-child(3n + 2) { margin-top: 3rem; }
+}
+
+/* ---------- Serviços ---------- */
+.services { border-top: 1px solid rgba(227, 211, 177, .25); }
+.services li {
+  display: grid;
+  gap: .6rem;
+  padding: 1.75rem 0;
+  border-bottom: 1px solid rgba(227, 211, 177, .25);
+}
+.services p { color: var(--sand); max-width: 32rem; text-shadow: 0 1px 8px rgba(var(--forest-rgb), .8); }
+
+.link {
+  justify-self: start;
+  font-weight: 600;
+  color: var(--amber);
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: .3em;
+  padding: .4rem 0;
+}
+.link:hover { color: #f7bb5c; }
+
+@media (min-width: 860px) {
+  .services li {
+    grid-template-columns: minmax(12rem, 1fr) 1.4fr 15rem;
+    align-items: center;
+    gap: 2.5rem;
+  }
+  .services p { margin: 0; }
+}
+
+/* ---------- Avaliações ---------- */
+.reviews-inner { display: grid; gap: 1.75rem; align-items: center; }
+.reviews-inner p:not(.stars) { max-width: 34rem; }
+.stars { display: flex; gap: .2rem; margin-bottom: .75rem; }
+.reviews h2 { margin-bottom: .75rem; }
+.reviews .btn { justify-self: start; }
+
+@media (min-width: 860px) {
+  .reviews-inner { grid-template-columns: 1fr auto; gap: 4rem; }
+}
+
+/* ---------- Contato ---------- */
+.contact { display: grid; gap: 2.5rem; align-items: start; }
+.contact address { line-height: 1.75; margin-bottom: 1.25rem; }
+.contact address strong { font-weight: 600; }
+.hours { color: var(--sand); }
+.phone { margin-bottom: 1.5rem !important; }
+.phone a { font-family: var(--font-display); font-size: 1.6rem; text-decoration: none; }
+.phone a:hover { text-decoration: underline; text-underline-offset: .25em; }
+
+.map {
+  border-radius: 999px 999px 18px 18px;
+  overflow: hidden;
+  background: var(--moss);
+  min-height: 22rem;
+  width: 100%;
+  max-width: 28rem;
+  margin: 0 auto;
+}
+.map iframe { width: 100%; height: 100%; min-height: 26rem; border: 0; display: block; }
+
+@media (min-width: 900px) {
+  .contact { grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+  .map { margin: 0; justify-self: end; }
+}
+
+/* ---------- Rodapé ---------- */
+.footer {
+  padding: 2rem var(--gutter) calc(2rem + env(safe-area-inset-bottom));
+  background: rgba(var(--forest-rgb), .95);
+  font-size: .9rem;
+  color: var(--sand);
+}
+.footer .wrap { display: flex; flex-wrap: wrap; gap: .5rem 2rem; justify-content: space-between; }
+
+/* ---------- Botão flutuante (só no celular) ---------- */
+.fab {
+  position: fixed;
+  right: calc(1rem + env(safe-area-inset-right));
+  bottom: calc(1rem + env(safe-area-inset-bottom));
+  z-index: 40;
+  width: 3.6rem; height: 3.6rem;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: var(--amber);
+  color: var(--ink-on-amber);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, .4);
+  -webkit-tap-highlight-color: transparent;
+}
+.fab .icon { width: 1.6rem; height: 1.6rem; }
+@media (min-width: 860px) { .fab { display: none; } }
+
+/* ---------- Visualizador de fotos ---------- */
+.lightbox {
+  width: 100vw; height: 100vh;
+  height: 100dvh;
+  max-width: none; max-height: none;
+  margin: 0; padding: 0;
+  border: 0;
+  background: rgba(8, 18, 13, .96);
+  color: var(--ivory);
+}
+.lightbox[open] { display: grid; grid-template-columns: auto 1fr auto; align-items: center; }
+.lightbox::backdrop { background: rgba(8, 18, 13, .96); }
+.lightbox figure { display: grid; justify-items: center; gap: .75rem; min-width: 0; padding: 1rem 0; }
+.lightbox img {
+  max-width: 100%;
+  max-height: calc(100dvh - 8rem);
+  max-height: calc(100vh - 8rem);
+  max-height: calc(100dvh - 8rem);
+  width: auto; height: auto;
+  border-radius: 14px;
+  object-fit: contain;
+}
+.lightbox figcaption { color: var(--sand); text-align: center; padding: 0 1rem; }
+
+.lb-close, .lb-nav {
+  background: rgba(247, 241, 225, .12);
+  color: var(--ivory);
+  border: 0;
+  border-radius: 50%;
+  width: 2.75rem; height: 2.75rem;
+  font-size: 1.8rem; line-height: 1;
+  cursor: pointer;
+  display: grid; place-items: center;
+  margin: .5rem;
+  -webkit-tap-highlight-color: transparent;
+}
+.lb-close:hover, .lb-nav:hover { background: rgba(247, 241, 225, .25); }
+.lb-close {
+  position: absolute;
+  top: calc(.5rem + env(safe-area-inset-top));
+  right: .5rem;
+  z-index: 2;
+}
+
+@media (max-width: 599px) {
+  .lightbox[open] { grid-template-columns: 1fr; grid-template-rows: 1fr auto; }
+  .lightbox figure { grid-row: 1; }
+  .lb-nav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 2; }
+  .lb-prev { left: .25rem; }
+  .lb-next { right: .25rem; }
+}
+
+/* ---------- Movimento reduzido ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { transition-duration: .01ms !important; }
+}
+
+  </style>
+  <title>Eliá SPA Altiplano | Spa em João Pessoa, PB</title>
+  <meta name="description" content="Eliá SPA Altiplano: massagens, escalda-pés e momentos de descanso no Shopping Pátio Altiplano, Piso L2, em João Pessoa. Agende pelo WhatsApp.">
+  <meta name="theme-color" content="#10231a">
+  <meta property="og:title" content="Eliá SPA Altiplano">
+  <meta property="og:description" content="Uma pausa de verdade dentro do Shopping Pátio Altiplano, em João Pessoa.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="assets/img/letreiro-mesa.jpg">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;600&family=Marcellus&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Vídeo de fundo: ocupa a tela toda durante todo o scroll -->
+  <div class="bg" aria-hidden="true">
+    <video id="bgVideo" autoplay muted loop playsinline preload="auto" poster="assets/video/poster.jpg" disablepictureinpicture>
+      <source src="assets/video/elia-loop.mp4" type="video/mp4">
+      <source src="elia-loop.webm">
+    </video>
+    <div class="bg-shade"></div>
+  </div>
+
+  <a class="skip" href="#conteudo">Ir para o conteúdo</a>
+
+  <header class="topbar" id="topbar">
+    <a class="logo" href="#topo" aria-label="Eliá SPA, início">eliá<span>spa</span></a>
+    <nav class="nav" aria-label="Principal">
+      <a href="#espaco">O espaço</a>
+      <a href="#galeria">Galeria</a>
+      <a href="#servicos">Serviços</a>
+      <a href="#contato">Como chegar</a>
+    </nav>
+    <a class="btn btn-amber btn-sm" href="https://wa.me/5583999887132?text=Ol%C3%A1!%20Vim%20pelo%20site%20e%20quero%20agendar%20no%20Eli%C3%A1%20SPA%20Altiplano." target="_blank" rel="noopener">Agendar</a>
+  </header>
+
+  <main id="conteudo">
+
+    <!-- HERO -->
+    <section class="hero" id="topo">
+      <div class="hero-inner">
+        <p class="rating" aria-label="Nota 4,8 de 5 no Google, com 100 avaliações">
+          <svg class="icon icon-star" viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          4,8 no Google, 100 avaliações
+        </p>
+        <h1>Uma pausa de verdade, dentro do shopping.</h1>
+        <p class="lead">Massagens, escalda-pés e tempo para respirar no Shopping Pátio Altiplano, em João Pessoa.</p>
+        <div class="actions">
+          <a class="btn btn-amber" href="https://wa.me/5583999887132?text=Ol%C3%A1!%20Vim%20pelo%20site%20e%20quero%20agendar%20no%20Eli%C3%A1%20SPA%20Altiplano." target="_blank" rel="noopener">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
+            Agendar pelo WhatsApp
+          </a>
+          <a class="btn btn-line" href="#contato">Como chegar</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- O ESPAÇO -->
+    <section class="band" id="espaco">
+      <div class="wrap split">
+        <figure class="arch">
+          <img src="recepcao.jpg" alt="Recepção do Eliá SPA com o letreiro verde na parede de textura cinza, ao lado de uma parede de pedra" width="900" height="1200" loading="lazy">
+        </figure>
+        <div class="copy">
+          <h2>Pedra, madeira e luz baixa</h2>
+          <p>O Eliá SPA fica no Piso L2 do Shopping Pátio Altiplano. Da porta para dentro, o corredor do shopping fica para trás: parede de pedra natural, letreiro aceso em verde e mesas com chá servido em cerâmica.</p>
+          <p>Recepção, vestiário com armários numerados e salas pensadas para você chegar, guardar suas coisas e desacelerar.</p>
+          <a class="btn btn-line" href="#galeria">Ver fotos do espaço</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- GALERIA -->
+    <section class="band band-soft" id="galeria">
+      <div class="wrap">
+        <h2>Conheça o espaço</h2>
+        <p class="section-lead">Toque em uma foto para ampliar.</p>
+      </div>
+      <ul class="gallery" role="list">
+        <li>
+          <button class="shot" type="button" data-index="0">
+            <img src="letreiro-mesa.jpg" alt="Letreiro verde iluminado na parede de pedra, com bandeja de chá, bule e biscoitos sobre a mesa" width="900" height="1200" loading="lazy">
+          </button>
+          <p class="cap">Letreiro aceso e mesa de chá</p>
+        </li>
+        <li>
+          <button class="shot" type="button" data-index="1">
+            <img src="escalda-pes.jpg"Poltrona de couro marrom com bacia de escalda-pés com rodelas de limão e toalhas enroladas" width="900" height="1200" loading="lazy">
+          </button>
+          <p class="cap">Escalda-pés com rodelas de limão</p>
+        </li>
+        <li>
+          <button class="shot" type="button" data-index="2">
+            <img src="cha-ceramica.jpg" alt="Duas xícaras de cerâmica verde com chá, sobre bandeja de palha com uma flor de frangipani" width="900" height="1200" loading="lazy">
+          </button>
+          <p class="cap">Chá em cerâmica verde</p>
+        </li>
+        <li>
+          <button class="shot" type="button" data-index="3">
+            <img src="vestiario.jpg" alt="Vestiário em madeira com armários numerados de 1 a 6 e banco com almofadas verdes" width="900" height="1200" loading="lazy">
+          </button>
+          <p class="cap">Vestiário com armários numerados</p>
+        </li>
+        <li>
+          <button class="shot" type="button" data-index="4">
+            <img src="sobremesa.jpg" alt="Mesa redonda com taça de sobremesa, vasos com flores rosas e xícara de chá em bandeja escura" width="900" height="1200" loading="lazy">
+          </button>
+          <p class="cap">Sobremesa e flores na mesa</p>
+        </li>
+        <li>
+          <button class="shot" type="button" data-index="5">
+            <img src="recepcao.jpg" alt="Recepção com balcão de madeira, tablet e o letreiro Eliá SPA na parede" width="900" height="1200" loading="lazy">
+          </button>
+          <p class="cap">Recepção</p>
+        </li>
+      </ul>
+    </section>
+
+    <!-- SERVIÇOS -->
+    <section class="band" id="servicos">
+      <div class="wrap">
+        <h2>Serviços</h2>
+        <p class="section-lead">Escolha o que combina com o seu dia. Valores e pacotes você confirma direto no WhatsApp.</p>
+        <ul class="services" role="list">
+          <li>
+            <h3>Escalda-pés</h3>
+            <p>Bacia com rodelas de limão e sal para desacelerar os pés e a cabeça.</p>
+            <a class="link" href="https://wa.me/5583999887132?text=Ol%C3%A1!%20Quero%20saber%20sobre%20o%20escalda-p%C3%A9s%20no%20Eli%C3%A1%20SPA." target="_blank" rel="noopener">Perguntar sobre escalda-pés</a>
+          </li>
+          <li>
+            <h3>Massagens relaxantes</h3>
+            <p>Para soltar as tensões do corpo. Pergunte quais técnicas estão disponíveis.</p>
+            <a class="link" href="https://wa.me/5583999887132?text=Ol%C3%A1!%20Quero%20saber%20sobre%20as%20massagens%20no%20Eli%C3%A1%20SPA." target="_blank" rel="noopener">Perguntar sobre massagens</a>
+          </li>
+          <li>
+            <h3>Tratamentos de beleza</h3>
+            <p>Cuidados para o corpo e a pele. Consulte as opções do momento.</p>
+            <a class="link" href="https://wa.me/5583999887132?text=Ol%C3%A1!%20Quero%20saber%20sobre%20os%20tratamentos%20de%20beleza%20no%20Eli%C3%A1%20SPA." target="_blank" rel="noopener">Perguntar sobre tratamentos</a>
+          </li>
+          <li>
+            <h3>Vale-presente</h3>
+            <p>Um momento de descanso para dar a quem você gosta.</p>
+            <a class="link" href="https://wa.me/5583999887132?text=Ol%C3%A1!%20Quero%20saber%20sobre%20o%20vale-presente%20do%20Eli%C3%A1%20SPA." target="_blank" rel="noopener">Perguntar sobre vale-presente</a>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- AVALIAÇÕES -->
+    <section class="band band-soft reviews" id="avaliacoes">
+      <div class="wrap reviews-inner">
+        <div>
+          <p class="stars" aria-hidden="true">
+            <svg class="icon icon-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg class="icon icon-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg class="icon icon-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg class="icon icon-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg class="icon icon-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </p>
+          <h2>Nota 4,8 no Google</h2>
+          <p>Mais de 100 clientes já avaliaram o Eliá SPA Altiplano. Leia o que eles contam e veja as fotos que eles tiraram.</p>
+        </div>
+        <a class="btn btn-line" href="https://www.google.com/search?q=Eli%C3%A1+SPA+Altiplano+Jo%C3%A3o+Pessoa" target="_blank" rel="noopener">Ver avaliações no Google</a>
+      </div>
+    </section>
+
+    <!-- CONTATO -->
+    <section class="band band-deep" id="contato">
+      <div class="wrap contact">
+        <div class="copy">
+          <h2>Como chegar</h2>
+          <address>
+            <strong>Shopping Pátio Altiplano</strong><br>
+            R. Poeta Targino Teixeira, 251<br>
+            Piso L2, loja 23<br>
+            Altiplano Cabo Branco, João Pessoa, PB<br>
+            CEP 58046-090
+          </address>
+          <p class="hours">Atendemos até às 21h. Confirme os dias e horários pelo WhatsApp.</p>
+          <p class="phone"><a href="tel:+5583999887132">(83) 99988-7132</a></p>
+          <div class="actions">
+            <a class="btn btn-amber" href="https://wa.me/5583999887132?text=Ol%C3%A1!%20Vim%20pelo%20site%20e%20quero%20agendar%20no%20Eli%C3%A1%20SPA%20Altiplano." target="_blank" rel="noopener">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
+              WhatsApp
+            </a>
+            <a class="btn btn-line" href="tel:+5583999887132">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              Ligar
+            </a>
+            <a class="btn btn-line" href="https://www.google.com/maps/dir/?api=1&destination=Eli%C3%A1%20SPA%20Altiplano%2C%20Shopping%20P%C3%A1tio%20Altiplano%2C%20Jo%C3%A3o%20Pessoa" target="_blank" rel="noopener">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+              Rotas
+            </a>
+          </div>
+        </div>
+        <!-- MAP-START -->
+        <div class="map">
+          <iframe title="Mapa do Eliá SPA Altiplano" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+            src="https://www.google.com/maps?q=Eli%C3%A1+SPA+Altiplano+Jo%C3%A3o+Pessoa&amp;output=embed"></iframe>
+        </div>
+        <!-- MAP-END -->
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <p>Eliá SPA Altiplano. Shopping Pátio Altiplano, Piso L2, loja 23, João Pessoa, PB.</p>
+      <p><a href="#topo">Voltar ao topo</a></p>
+    </div>
+  </footer>
+
+  <!-- Botão flutuante de WhatsApp (celular) -->
+  <a class="fab" href="https://wa.me/5583999887132?text=Ol%C3%A1!%20Vim%20pelo%20site%20e%20quero%20agendar%20no%20Eli%C3%A1%20SPA%20Altiplano." target="_blank" rel="noopener" aria-label="Agendar pelo WhatsApp">
+    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
+  </a>
+
+  <!-- Visualizador de fotos -->
+  <dialog class="lightbox" id="lightbox" aria-label="Foto ampliada">
+    <button class="lb-close" type="button" aria-label="Fechar">&times;</button>
+    <button class="lb-nav lb-prev" type="button" aria-label="Foto anterior">&#8249;</button>
+    <figure>
+      <img id="lbImg" alt="">
+      <figcaption id="lbCap"></figcaption>
+    </figure>
+    <button class="lb-nav lb-next" type="button" aria-label="Próxima foto">&#8250;</button>
+  </dialog>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
